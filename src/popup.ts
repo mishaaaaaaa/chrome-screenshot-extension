@@ -1,27 +1,24 @@
-import { setBadgeText } from "./common";
+document.getElementById("captureVisibleTab")?.addEventListener("click", () => {
+  chrome.runtime.sendMessage({ action: "captureVisibleTab" }, (response) => {
+    if (chrome.runtime.lastError) {
+      console.error("Error sending message:", chrome.runtime.lastError.message);
+      return;
+    }
 
-console.log("Hello, world from popup!");
+    if (response?.error) {
+      console.error("Error capturing screenshot:", response.error);
+      return;
+    }
 
-// Handle the ON/OFF switch
-const checkbox = document.getElementById("enabled") as HTMLInputElement;
-chrome.storage.sync.get("enabled", (data) => {
-  checkbox.checked = !!data.enabled;
-  void setBadgeText(data.enabled);
-});
-checkbox.addEventListener("change", (event) => {
-  if (event.target instanceof HTMLInputElement) {
-    void chrome.storage.sync.set({ enabled: event.target.checked });
-    void setBadgeText(event.target.checked);
-  }
-});
+    if (response?.dataUrl) {
+      console.log("Captured dataUrl:", response.dataUrl);
 
-// Handle the input field
-const input = document.getElementById("item") as HTMLInputElement;
-chrome.storage.sync.get("item", (data) => {
-  input.value = data.item || "";
-});
-input.addEventListener("change", (event) => {
-  if (event.target instanceof HTMLInputElement) {
-    void chrome.storage.sync.set({ item: event.target.value });
-  }
+      // Открываем editor.html и передаем скриншот через URL параметр
+      chrome.tabs.create({
+        url: `editor.html?screenshot=${encodeURIComponent(response.dataUrl)}`,
+      });
+    } else {
+      console.error("No dataUrl received in popup.ts");
+    }
+  });
 });

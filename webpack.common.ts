@@ -7,6 +7,7 @@ const config: webpack.Configuration = {
     background: "./src/background.ts",
     content: "./src/content.ts",
     popup: "./src/popup.ts",
+    editor: "./src/editor.ts",
   },
   resolve: {
     extensions: [".ts"],
@@ -23,7 +24,7 @@ const config: webpack.Configuration = {
   output: {
     filename: "[name].js",
     path: path.resolve(__dirname, "dist"),
-    clean: true, // Clean the output directory before emit.
+    clean: true,
   },
   plugins: [
     new CopyWebpackPlugin({

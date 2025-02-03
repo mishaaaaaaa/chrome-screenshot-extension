@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Screenshot Editor</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+      }
+      canvas {
+        border: 1px solid #ccc;
+        max-width: 100%;
+        height: auto;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Screenshot Editor</h1>
+    <canvas id="editorCanvas"></canvas>
+    <br />
+    <button id="downloadButton">Download</button>
+
+    <script src="editor.js"></script>
+  </body>
+</html>
