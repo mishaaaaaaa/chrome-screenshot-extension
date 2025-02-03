@@ -52,9 +52,15 @@ document.getElementById("captureVisibleTab")?.addEventListener("click", () => {
 
 document
   .getElementById("captureScreenWindow")
-  ?.addEventListener("click", () => {
-    chrome.runtime.sendMessage(
-      { action: "captureScreenWindow", tab: chrome.tabs },
-      (response) => {}
-    );
+  ?.addEventListener("click", async () => {
+    try {
+      chrome.runtime.sendMessage(
+        { action: "captureScreenWindow" },
+        (response) => {
+          console.log(response);
+        }
+      );
+    } catch (error) {
+      console.error("Ошибка захвата экрана:", error);
+    }
   });
