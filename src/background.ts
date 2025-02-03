@@ -1,5 +1,7 @@
+import { actions } from "./actions";
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "captureVisibleTab") {
+  if (message.action === actions.captureVisibleTab) {
     chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       const activeTab = tabs[0];
 
@@ -29,7 +31,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
-  if (message.action === "captureScreenWindow") {
+  if (message.action === actions.captureScreenWindow) {
     const captureScreenWindow = async () => {
       const existingContexts = await chrome.runtime.getContexts({});
 
@@ -47,8 +49,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
 
       chrome.runtime.sendMessage({
-        type: "start-recording",
-        target: "offscreen",
+        action: actions.offscreemCaptureScreenWindow,
       });
     };
 

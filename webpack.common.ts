@@ -8,6 +8,7 @@ const config: webpack.Configuration = {
     content: "./src/content.ts",
     popup: "./src/popup.ts",
     editor: "./src/editor.ts",
+    offscreen: "./src/offscreen.ts",
   },
   resolve: {
     extensions: [".ts"],
