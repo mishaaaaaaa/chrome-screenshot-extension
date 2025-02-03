@@ -3,10 +3,17 @@
   "name": "My Chrome Extension",
   "version": "0.1.0",
   "description": "My first Chrome extension.",
+  "minimum_chrome_version": "116",
   "action": {
     "default_popup": "popup.html"
   },
-  "permissions": ["activeTab", "tabs", "tabCapture"],
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "tabCapture",
+    "desktopCapture",
+    "offscreen"
+  ],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"

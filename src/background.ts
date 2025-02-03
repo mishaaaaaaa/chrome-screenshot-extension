@@ -1,14 +1,16 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "captureVisibleTab") {
     chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-      if (!tabs.length || !tabs[0].id) {
+      const activeTab = tabs[0];
+
+      if (!activeTab?.id) {
         sendResponse({ error: "No active tab found" });
         return;
       }
 
       try {
         const screenshotUrl = await chrome.tabs.captureVisibleTab(
-          tabs[0].windowId
+          activeTab.windowId
         );
 
         if (chrome.runtime.lastError) {
@@ -25,5 +27,60 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
 
     return true;
+  }
+
+  if (message.action === "captureScreenWindow") {
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      const activeTab = tabs[0];
+      console.log(activeTab);
+      console.log(tabs);
+
+      const existingContexts = await chrome.runtime.getContexts({});
+      let recording = false;
+
+      const offscreenDocument = existingContexts.find(
+        (c) => c.contextType === "OFFSCREEN_DOCUMENT"
+      );
+
+      if (!offscreenDocument) {
+        // Create an offscreen document.
+        await chrome.offscreen.createDocument({
+          url: "offscreen.html",
+          reasons: ["USER_MEDIA"] as any,
+          justification: "Recording from chrome.tabCapture API",
+        });
+      } else {
+        if (offscreenDocument.documentUrl)
+          recording = offscreenDocument.documentUrl.endsWith("#recording");
+      }
+
+      if (recording) {
+        chrome.runtime.sendMessage({
+          type: "stop-recording",
+          target: "offscreen",
+        });
+        // chrome.action.setIcon({ path: "icons/not-recording.png" });
+        return;
+      }
+
+      // Get a MediaStream for the active tab.
+
+      await chrome.tabCapture.getMediaStreamId(
+        {
+          targetTabId: activeTab.id,
+        },
+        (streamIdx) => {
+          chrome.runtime.sendMessage({
+            type: "start-recording",
+            target: "offscreen",
+            data: streamIdx,
+          });
+        }
+      );
+
+      // Send the stream ID to the offscreen document to start recording.
+    });
+
+    return true; // Required to use sendResponse asynchronously
   }
 });

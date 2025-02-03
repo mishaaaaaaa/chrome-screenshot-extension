@@ -22,3 +22,39 @@ document.getElementById("captureVisibleTab")?.addEventListener("click", () => {
     }
   });
 });
+
+// document
+//   .getElementById("captureScreenWindow")
+//   ?.addEventListener("click", () => {
+//     chrome.runtime.sendMessage(
+//       { action: "captureScreenWindow" },
+//       (response) => {
+//         if (chrome.runtime.lastError) {
+//           console.error("Error:", chrome.runtime.lastError.message);
+//           return;
+//         }
+
+//         if (response?.error) {
+//           console.error("Capture error:", response.error);
+//           return;
+//         }
+
+//         if (response?.dataUrl) {
+//           chrome.tabs.create({
+//             url: `editor.html?screenshot=${encodeURIComponent(
+//               response.dataUrl
+//             )}`,
+//           });
+//         }
+//       }
+//     );
+//   });
+
+document
+  .getElementById("captureScreenWindow")
+  ?.addEventListener("click", () => {
+    chrome.runtime.sendMessage(
+      { action: "captureScreenWindow", tab: chrome.tabs },
+      (response) => {}
+    );
+  });
