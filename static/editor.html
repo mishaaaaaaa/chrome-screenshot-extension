@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Screenshot Editor</title>
+    <!-- Подключаем стили для Cropper.js -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"
+    />
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -22,14 +27,20 @@
         font-size: 16px;
         cursor: pointer;
       }
+      #image {
+        max-width: 100%;
+      }
     </style>
   </head>
   <body>
     <h1>Screenshot Editor</h1>
-    <canvas id="editorCanvas"></canvas>
+    <img id="image" src="" alt="Screenshot" />
     <br />
     <button id="downloadButton">Download</button>
+    <button id="cropButton">Crop</button>
 
+    <!-- Подключаем JS для Cropper.js -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script> -->
     <script src="editor.js"></script>
   </body>
 </html>
