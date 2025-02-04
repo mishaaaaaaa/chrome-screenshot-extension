@@ -1,12 +1,15 @@
 import { actions } from "./actions";
 
-chrome.runtime.onMessage.addListener(async (message) => {
-  if (message.action === actions.offscreemCaptureScreenWindow) {
-    await takeScreenshot();
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === actions.offscreenCaptureScreenWindow) {
+    takeScreenshot(sendResponse);
+    return true; // Разрешает использовать sendResponse асинхронно
   }
 });
 
-async function takeScreenshot() {
+async function takeScreenshot(
+  sendResponse: (response: { dataUrl?: string; error?: string }) => void
+) {
   try {
     const stream = await navigator.mediaDevices.getDisplayMedia({
       video: true,
@@ -18,20 +21,20 @@ async function takeScreenshot() {
 
     await new Promise((resolve) => (video.onloadedmetadata = resolve));
 
-    const canvas = document.createElement("canvas");
+    const canvas = document.createElement("canvas") as HTMLCanvasElement;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-    if (ctx) ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     stream.getTracks().forEach((track) => track.stop());
 
-    canvas.toBlob((blob) => {
-      const screenshotUrl = URL.createObjectURL(blob as Blob);
-      window.open(screenshotUrl, "_blank");
-    }, "image/png");
+    const dataUrl = canvas.toDataURL("image/png");
+
+    sendResponse({ dataUrl });
   } catch (error) {
     console.error("Ошибка при создании скриншота:", error);
+    sendResponse({ error: "Ошибка при создании скриншота" });
   }
 }
