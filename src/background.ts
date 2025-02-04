@@ -1,32 +1,23 @@
 import { actions } from "./actions";
 
-chrome.runtime.onMessage.addListener((message) => {
+chrome.runtime.onMessage.addListener(async (message) => {
   if (message.action === actions.captureVisibleTab) {
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-      const activeTab = tabs[0];
+    try {
+      const [activeTab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
 
-      if (!activeTab?.id) {
-        console.error("No active tab found");
-        return;
-      }
+      const screenshotUrl = await chrome.tabs.captureVisibleTab(
+        activeTab.windowId
+      );
 
-      try {
-        const screenshotUrl = await chrome.tabs.captureVisibleTab(
-          activeTab.windowId
-        );
-
-        if (chrome.runtime.lastError) {
-          console.error("Capture error:", chrome.runtime.lastError.message);
-          return;
-        }
-
-        chrome.storage.local.set({ screenshot: screenshotUrl }, () => {
-          chrome.tabs.create({ url: "editor.html" });
-        });
-      } catch (error) {
-        console.error("Error capturing visible tab:", error);
-      }
-    });
+      chrome.storage.local.set({ screenshot: screenshotUrl }, () => {
+        chrome.tabs.create({ url: "editor.html" });
+      });
+    } catch (error) {
+      console.error("Error capturing visible tab:", error);
+    }
 
     return true;
   }
@@ -41,8 +32,9 @@ chrome.runtime.onMessage.addListener((message) => {
       if (!offscreenDocument) {
         await chrome.offscreen.createDocument({
           url: "offscreen.html",
-          reasons: ["USER_MEDIA"] as any,
-          justification: "Recording from chrome.tabCapture API",
+          reasons: [chrome.offscreen.Reason.DISPLAY_MEDIA],
+          justification:
+            "Recording from navigator.mediaDevices.getDisplayMedia API",
         });
       }
 
@@ -53,13 +45,16 @@ chrome.runtime.onMessage.addListener((message) => {
             chrome.storage.local.set({ screenshot: response?.dataUrl }, () => {
               chrome.tabs.create({ url: "editor.html" });
             });
-
-            await chrome.offscreen.closeDocument().catch((err) => {
-              console.warn("Failed to close offscreen document:", err);
-            });
           } else {
-            console.error("Ошибка получения скриншота:", response?.error);
+            console.log(
+              "Either user canceled modal or some other error occured during navigator.mediaDevices.getDisplayMedia:",
+              response.error
+            );
           }
+          // finish stream in any case
+          await chrome.offscreen.closeDocument().catch((err) => {
+            console.warn("Failed to close offscreen document:", err);
+          });
         }
       );
     };
@@ -68,6 +63,3 @@ chrome.runtime.onMessage.addListener((message) => {
     return true;
   }
 });
-
-// TODO: HANDLE CANCEL MODAL
-// ERROR TRANSLATE

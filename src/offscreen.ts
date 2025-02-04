@@ -3,7 +3,7 @@ import { actions } from "./actions";
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === actions.offscreenCaptureScreenWindow) {
     takeScreenshot(sendResponse);
-    return true; // Разрешает использовать sendResponse асинхронно
+    return true;
   }
 });
 
@@ -33,8 +33,7 @@ async function takeScreenshot(
     const dataUrl = canvas.toDataURL("image/png");
 
     sendResponse({ dataUrl });
-  } catch (error) {
-    console.error("Ошибка при создании скриншота:", error);
-    sendResponse({ error: "Ошибка при создании скриншота" });
+  } catch (error: any) {
+    sendResponse({ error });
   }
 }
