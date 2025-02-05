@@ -3,9 +3,13 @@
   "name": "Advanced Screenshot",
   "version": "1.0.0",
   "description": "My first Chrome extension.",
-  "minimum_chrome_version": "116",
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "permissions": [
     "activeTab",

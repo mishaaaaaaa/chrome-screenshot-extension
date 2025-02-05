@@ -3,26 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="popup.css" />
     <title>Screenshot Tool</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        padding: 20px;
-      }
-      button {
-        display: block;
-        width: 100%;
-        margin: 10px 0;
-        padding: 10px;
-        font-size: 16px;
-      }
-    </style>
   </head>
   <body>
-    <h1>Screenshot Tool</h1>
-    <button id="captureVisibleTab">Capture Tab</button>
-    <button id="captureScreenWindow">Screen/Window</button>
+    <h1>Advanced Screenshot</h1>
+
+    <button id="captureScreenWindow">
+      <svg class="icon" viewBox="0 0 24 24">
+        <path
+          d="M2 4c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2h-6v2h2v2H8v-2h2v-2H4c-1.1 0-2-.9-2-2V4zm18 0H4v12h16V4z"
+        ></path>
+      </svg>
+      Screen/Window
+    </button>
+
+    <button id="captureVisibleTab">
+      <svg class="icon" viewBox="0 0 24 24">
+        <path
+          d="M20 6H4V4h16v2zm0 2v10c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V8h16zm-6 3h-4v1h4v-1z"
+        ></path>
+      </svg>
+      Capture Viewport
+    </button>
+
     <script src="popup.js"></script>
   </body>
 </html>
